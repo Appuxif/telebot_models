@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setuptools.setup(
     name='telebot_models',
-    version='0.0.1',
+    version='0.0.6',
     author='Appuxif',
     author_email='app@mail.com',
     description='A Python package with utils for telebot models based on mongo-motor',
