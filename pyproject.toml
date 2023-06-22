@@ -1,0 +1,35 @@
+[tool.black]
+line-length = 120
+skip-string-normalization = true
+
+[tool.isort]
+line_length = '120'
+multi_line_output = '3'
+include_trailing_comma = 'true'
+combine_as_imports = '1'
+known_firstparty = ['project']
+known_third_party = []
+sections = 'FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER'
+
+[tool.pylint."MASTER"]
+extension-pkg-whitelist = ['pydantic', 'tzfpy']
+load-plugins = ['pylint_pydantic']
+
+[tool.pylint."FORMAT"]
+max-line-length = 120
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "too-few-public-methods",
+    "too-many-ancestors",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "duplicate-code"
+]
+
+[tool.pylint."BASIC"]
+good-names = [
+    'rf', 'pk', 'fn', 'cb',
+    'i', 'j', 'k', 'e', 't', 'r',
+    'yes', 'no'
+]
