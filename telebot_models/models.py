@@ -1,4 +1,4 @@
-from typing import Any, Callable, ClassVar, Coroutine, Generic, Optional, Type, TypeVar
+from typing import Any, Callable, ClassVar, Generic, Optional, Type, TypeVar
 
 from bson import ObjectId
 from motor import core
@@ -118,7 +118,7 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
 
     @classmethod
     def get_collection(cls) -> core.AgnosticCollection:
-        return await CollectionGetter.get_collection(cls.collection)
+        return CollectionGetter.get_collection(cls.collection)
 
     @classmethod
     async def insert(cls, model: T, **kwargs) -> InsertOneResult:
@@ -193,9 +193,9 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
 
 class CollectionGetter:
     @staticmethod
-    async def get_collection(collection: str) -> core.AgnosticCollection:
+    def get_collection(collection: str) -> core.AgnosticCollection:
         raise NotImplementedError(f'Not implemented for {collection}')
 
 
-def set_collection_getter(func: Callable[[str], Coroutine[Any, Any, core.AgnosticCollection]]) -> None:
+def set_collection_getter(func: Callable[[str], core.AgnosticCollection]) -> None:
     CollectionGetter.get_collection = func
