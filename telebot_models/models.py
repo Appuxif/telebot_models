@@ -138,8 +138,8 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
 
     @classmethod
     async def update(cls, model: T, **kwargs) -> UpdateResult:
-        include: set | None = kwargs.get('include')
-        exclude: set | None = kwargs.get('exclude')
+        include: set | None = kwargs.pop('include', None)
+        exclude: set | None = kwargs.pop('exclude', None)
 
         if include:
             exclude = None
@@ -148,7 +148,9 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
             exclude.add('id')
 
         return await cls.get_collection().update_one(
-            {'_id': model.id}, {'$set': model.dict(by_alias=True, exclude=exclude, include=include)}
+            {'_id': model.id},
+            {'$set': model.dict(by_alias=True, exclude=exclude, include=include)},
+            **kwargs,
         )
 
     async def update_many(self, *args, **kwargs) -> UpdateResult:
