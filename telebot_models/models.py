@@ -84,13 +84,16 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
 
     model: Type[T] = Model
     collection: str = ''
-    _relation_map: list[tuple[type, str, str]] = []
+    _relation_map: list[tuple[type, str, str]]
 
     def __init__(self, document_filter: dict | None = None):
         self.document_filter: dict = document_filter or {}
 
     @classmethod
     def relation_map(cls, field_name, model_field_name):
+        if not hasattr(cls, '_relation_map'):
+            cls._relation_map = []
+
         def decorator(model_cls: Type[T]) -> Type[T]:
             cls._relation_map.append((model_cls, field_name, model_field_name))
             rel_obj_name = cls.__name__.replace('ModelManager', '').lower()
