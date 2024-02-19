@@ -84,15 +84,21 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
 
     model: Type[T] = Model
     collection: str = ''
-    _relation_map: list[tuple[type, str, str]] = []
+    _relation_map: list[tuple[type, str, str]]
 
     def __init__(self, document_filter: dict | None = None):
         self.document_filter: dict = document_filter or {}
 
     @classmethod
+    def _get_relation_map(cls) -> list[tuple[type, str, str]]:
+        if not hasattr(cls, '_relation_map'):
+            cls._relation_map = []
+        return cls._relation_map
+
+    @classmethod
     def relation_map(cls, field_name, model_field_name):
         def decorator(model_cls: Type[T]) -> Type[T]:
-            cls._relation_map.append((model_cls, field_name, model_field_name))
+            cls._get_relation_map().append((model_cls, field_name, model_field_name))
             rel_obj_name = cls.__name__.replace('ModelManager', '').lower()
 
             def related_model_set(self):
@@ -159,7 +165,7 @@ class BaseModelManager(Generic[T], metaclass=ModelManagerMeta):
     @classmethod
     async def delete(cls, model: T) -> DeleteResult:
         _cls: Type[Model]
-        for _cls, field_name, model_field_name in cls._relation_map:
+        for _cls, field_name, model_field_name in cls._get_relation_map():
             objs = await _cls.manager({field_name: getattr(model, model_field_name)}).find_all()
             for obj in objs:
                 await obj.delete()
